@@ -51,8 +51,9 @@ Contact.prototype.fullName = function() {
 }
 
 //Business Logic for Addresses
-function Addresses(addressType, address) {
-  this[addressType] = address;
+function Addresses(homeAddress, workAddress) {
+  this.homeAddress = homeAddress;
+  this.workAddress = workAddress;
 }
 
 Contact.prototype.addAddresses = function(address) {
@@ -79,7 +80,8 @@ function showContact(contactId) {
   $(".last-name").html(contact.lastName);
   $(".phone-number").html(contact.phoneNumber);
   $(".email-address").html(contact.emailAddress);
-  $(".new-address").html(contact.addresses);
+  $(".home-address").html(contact.addresses[0].homeAddress);
+  $(".work-address").html(contact.addresses[0].workAddress);
   var buttons = $("#buttons");
   buttons.empty();
   buttons.append("<button class='deleteButton' id=" + contact.id + ">Delete</button>");
@@ -98,27 +100,36 @@ function attachContactListeners() {
 
 $(document).ready(function() {
   attachContactListeners();
+  $("#addAddress").click(function() {
+    $("#wAddress").show();
+    $("#addAddress").hide();
+    console.log("you clicked it");
+});
   $("form#new-contact").submit(function(event) {
     event.preventDefault();
     var inputtedFirstName = $("input#new-first-name").val();
     var inputtedLastName = $("input#new-last-name").val();
     var inputtedPhoneNumber = $("input#new-phone-number").val();
     var inputtedEmail = $("input#new-email").val();
-    var inputtedAddress = $("input#new-address").val();
-    var addressTypeInput = $('#addressType').val();
-    var addresses = new Addresses(addressTypeInput, inputtedAddress);
+    var inputtedHomeAddress = $("input#homeAddress").val();
+    var inputtedWorkAddress = $('input#workAddress').val();
+    if(inputtedWorkAddress === "") {
+      $("#workAddHolder").hide();
+    }
+    var addresses = new Addresses(inputtedHomeAddress, inputtedWorkAddress);
     $("input#new-first-name").val("");
     $("input#new-last-name").val("");
     $("input#new-phone-number").val("");
     $("input#new-email").val("");
-    $("input#new-address").val("");
-    var newContact = new Contact(inputtedFirstName, inputtedLastName, inputtedPhoneNumber, inputtedEmail, inputtedAddress);
-        addressBook.addContact(newContact);
-        newContact.addAddresses(addresses);
-        console.log(newContact);
-        console.log(newContact.addresses);
-        console.log(newContact.addresses[0]);
-        console.log(newContact.addresses[0].homeAddress);
+    $("input#homeAddress").val("");
+    $("input#workAddress").val("");
+    var newContact = new Contact(inputtedFirstName, inputtedLastName, inputtedPhoneNumber, inputtedEmail, inputtedHomeAddress, inputtedWorkAddress);
+    addressBook.addContact(newContact);
+    newContact.addAddresses(addresses);
+    // console.log(newContact);
+    // console.log(newContact.addresses);
+    // console.log(newContact.addresses[0]);
+    // console.log(newContact.addresses[0].workAddress);
     displayContactDetails(addressBook);
   })
 })
